@@ -98,6 +98,14 @@ category_order = {
 }
 ```
 
+### Working with video files
+As video files tend to be heavy, they are not displayed in the main grid of the app.
+Insted, they are shown as images with green border and can be played only when in selected for tagging.
+It is not ideal, but I have created additional tool named thumb_create.py that can allow you to create thumbnails fast.
+When you run it, you have to provide the source directory of your video files and then create thumbnails from given timestamp.
+You have to name the file the same as the number, the media you try to add is refering too. 
+E.g. You need thumbnail for media nr. 4, you save the file with the app as 4.jpg
+
 ## Dependencies
 
 * Python==3.10

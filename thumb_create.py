@@ -13,7 +13,7 @@ class VideoThumbnailApp:
         # Directory and video variables
         self.video_directory = ""
         # Set default thumbnail directory to a folder named "thumbnails" in the current working directory
-        self.thumbnail_directory = os.path.join(os.getcwd(), "F:/booru app/static/thumbnails")
+        self.thumbnail_directory = os.path.join(os.getcwd(), "./static/thumbnails")
         
         # Ensure the default thumbnail directory exists
         if not os.path.exists(self.thumbnail_directory):
