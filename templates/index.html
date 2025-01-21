@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalBooru</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="top-bar">
+            <!-- Wrap the top-bar content inside an anchor tag -->
+            <a href="{{ url_for('index') }}">
+                <h1>LocalBooru</h1>
+            </a>
+        <div class="search-bar">
+            <!-- Search Bar -->
+            <form action="{{ url_for('search') }}" method="GET">
+                <input type="text" id="search-bar" name="q" placeholder="Search by tags" autocomplete="off" style="width: 200px;">
+                <div id="search-suggestions-box" style="border: 1px solid #ccc; display: none; max-width: 200px;"></div>
+                <button type="submit" class="button">Search</button>
+            </form>
+    
+        
+        <!-- Button to redirect to scan.html -->
+        <a href="{{ url_for('scan_media') }}" class="button">Scan and Tag</a>
+        <a href="{{ url_for('manage_tags') }}" class="button">Manage Tags</a>
+        <a href="{{ url_for('random_media') }}" class="button">Random</a>
+
+    </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="tag-column">
+            <h2>Most Common Tags</h2>
+            {% for tag in common_tags %}
+                <a href="{{ url_for('search') }}?q={{ tag.name }}" class="tag-button tag-{{ tag.category|lower or 'default' }}">
+                    {{ tag.name }} ({{ tag.count }})
+                </a>
+            {% endfor %}
+        </div>
+        
+
+        <div class="media-column">
+            
+            <h2>All Media (Images and Videos)</h2>
+            
+            {% if query %}
+                <div class="tag-display">
+                    <strong>Searched Tags:</strong>
+                    {% for tag in query.split(',') %}
+                        <span>{{ tag.strip() }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="media-grid">
+                {% for image in images %}
+                    <div class="media-item">
+                        {% if image.path.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
+                            <img src="{{ url_for('send_media', filename=image.path.split('/')[-1]) }}" alt="Image">
+                        {% elif image.path.endswith(('.mp4', '.avi', '.mov', '.mkv')) %}
+                            <!-- Use the sanitized filename for the poster -->
+                            {% set sanitized_filename = image.path.split('/')[-1].replace(' ', '_').replace('/', '_').replace('\\', '_').rsplit('.', 1)[0] + '.jpg' %}
+                            <!--<video controls>
+                                <source src="{{ url_for('send_media', filename=image.path.split('/')[-1]) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video> -->
+                            <img src="/static/thumbnails/{{ db_directory }}/{{ image.id }}.jpg" alt="not found" class="thumbnail">
+
+
+
+                        {% endif %}
+                        <a href="{{ url_for('tag_media', image_id=image.id) }}" class="button">Tag</a>
+                        <form action="{{ url_for('delete_media', image_id=image.id) }}" method="post" style="display:inline;">
+                            <button type="submit" class="button">Delete</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination controls -->
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ url_for('search', q=query, page=page - 1) }}" class="button">Previous</a>
+                {% endif %}
+                {% for p in range(1, total_pages + 1) %}
+                    <a href="{{ url_for('search', q=query, page=p) }}" class="button {% if p == page %}active{% endif %}">{{ p }}</a>
+                {% endfor %}
+                {% if page < total_pages %}
+                    <a href="{{ url_for('search', q=query, page=page + 1) }}" class="button">Next</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchBar = document.getElementById('search-bar');
+        const searchSuggestionsBox = document.getElementById('search-suggestions-box');
+    
+        searchBar.addEventListener('input', function() {
+            const value = this.value;
+    
+            // Split the input into tags
+            const tags = value.split(',').map(tag => tag.trim());
+            const lastTag = tags[tags.length - 1]; // Get the last tag for suggestions
+    
+            if (lastTag.length > 0) {
+                fetch(`/tag_suggestions?q=${lastTag}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const suggestions = data.suggestions;
+    
+                        if (suggestions.length > 0) {
+                            searchSuggestionsBox.innerHTML = '';
+    
+                            suggestions.forEach(suggestion => {
+                                const suggestionItem = document.createElement('div');
+                                suggestionItem.textContent = suggestion;
+                                suggestionItem.style.cursor = 'pointer';
+                                suggestionItem.style.padding = '5px';
+                                suggestionItem.addEventListener('click', function() {
+                                    // When a suggestion is clicked, add it to the search bar
+                                    tags[tags.length - 1] = suggestion; // Replace the last tag
+                                    searchBar.value = tags.join(', '); // Update the input with all tags
+                                    searchSuggestionsBox.style.display = 'none'; // Hide suggestions
+                                });
+                                searchSuggestionsBox.appendChild(suggestionItem);
+                            });
+    
+                            searchSuggestionsBox.style.display = 'block';
+                        } else {
+                            searchSuggestionsBox.style.display = 'none';
+                        }
+                    });
+            } else {
+                searchSuggestionsBox.style.display = 'none';
+            }
+        });
+    
+        // Hide suggestions box when user clicks outside of it
+        document.addEventListener('click', function(e) {
+            if (!searchSuggestionsBox.contains(e.target) && e.target !== searchBar) {
+                searchSuggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+    
+
+    <br>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalBooru</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="top-bar">
+            <!-- Wrap the top-bar content inside an anchor tag -->
+            <a href="{{ url_for('index') }}">
+                <h1>LocalBooru</h1>
+            </a>
+        <div class="search-bar">
+            <!-- Search Bar -->
+            <form action="{{ url_for('search') }}" method="GET">
+                <input type="text" id="search-bar" name="q" placeholder="Search by tags" autocomplete="off" style="width: 200px;">
+                <div id="search-suggestions-box" style="border: 1px solid #ccc; display: none; max-width: 200px;"></div>
+                <button type="submit" class="button">Search</button>
+            </form>
+    
+        
+        <!-- Button to redirect to scan.html -->
+        <a href="{{ url_for('scan_media') }}" class="button">Scan and Tag</a>
+        <a href="{{ url_for('manage_tags') }}" class="button">Manage Tags</a>
+        <a href="{{ url_for('random_media') }}" class="button">Random</a>
+
+    </div>
+    </div>
+
+    <div class="main-layout">
+
+
+        <div class="media-column">
+    <h1>Scan Directory for Media</h1>
+    
+    <form action="{{ url_for('scan_media') }}" method="post">
+        <label for="directory">Directory:</label>
+        <input type="text" id="directory" name="directory" placeholder="Enter the directory path" required>
+        <br><br>
+        
+        <label for="tags">Tags (optional, comma-separated):</label>
+        <input type="text" id="tags" name="tags" placeholder="Enter tags, e.g., 'nature, vacation'">
+        <br><br>
+        
+        <button type="submit" class="button">Scan Directory</button><br><br>
+    </form>
+
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalBooru</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="top-bar">
+            <!-- Wrap the top-bar content inside an anchor tag -->
+            <a href="{{ url_for('index') }}">
+                <h1>LocalBooru</h1>
+            </a>
+        <div class="search-bar">
+            <!-- Search Bar -->
+            <form action="{{ url_for('search') }}" method="GET">
+                <input type="text" id="search-bar" name="q" placeholder="Search by tags" autocomplete="off" style="width: 200px;">
+                <div id="search-suggestions-box" style="border: 1px solid #ccc; display: none; max-width: 200px;"></div>
+                <button type="submit" class="button">Search</button>
+            </form>
+    
+        
+        <!-- Button to redirect to scan.html -->
+        <a href="{{ url_for('scan_media') }}" class="button">Scan and Tag</a>
+        <a href="{{ url_for('manage_tags') }}" class="button">Manage Tags</a>
+        <a href="{{ url_for('random_media') }}" class="button">Random</a>
+
+    </div>
+    </div>
+
+
+<div class="main-layout">
+    <div class="media-column">
+    <h1>Manage Tags</h1>
+
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tag Name</th>
+                <th>Current Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tag in tags %}
+            <tr>
+                <td>{{ tag.name }}</td>
+                <td>
+                    {% if tag.category %}
+                        {{ tag.category }}
+                    {% else %}
+                        <em>No Category</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Form to delete a tag -->
+                    <form action="{{ url_for('manage_tags') }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                        <button type="submit" class="button">Delete Tag</button>
+                    </form>
+
+                    <!-- Form to update category -->
+                    <form action="{{ url_for('update_tag_category') }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                        <input type="text" name="category" placeholder="Enter new category" value="{{ tag.category or '' }}" style="width: 150px;">
+                        <button type="submit" class="button">Update Category</button>
+                    </form>
+
+                    <!-- Form to remove category -->
+                    <form action="{{ url_for('remove_tag_category') }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                        <button type="submit" class="button">Remove Category</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{{ url_for('index') }}" class="button">Back to Index</a>
+</div>
+</div>
+</body>
+</html>
