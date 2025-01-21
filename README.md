@@ -1,6 +1,8 @@
 # LocalBooru
 Lightweight, fully local booru style app
-
+![123](https://github.com/user-attachments/assets/0e0dfff0-c16f-40f6-9996-4d049e682d44)
+![223](https://github.com/user-attachments/assets/777ceab8-f2b5-4145-9731-6983738efc79)
+![333](https://github.com/user-attachments/assets/78db6039-0d89-47f4-876f-8912e14a209b)
 ## Description
 
 As Wikitionary says:
